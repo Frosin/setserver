@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package = "/gen";
+
+service Api {
+    rpc Add(Set) returns (Result);
+	rpc Delete(Set) returns (Result);
+    rpc Subscribe(Empty) returns (stream Message);
+}
+
+message Set {
+	string Name = 1;
+	string Value = 2;
+}
+
+message Result {
+	bool Result = 1;
+}
+
+message Empty {}
+
+message Message {
+    string Name = 1;
+    string Operation = 2;
+    string Value = 3;
+}
