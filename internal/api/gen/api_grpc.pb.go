@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ApiClient interface {
 	Add(ctx context.Context, in *Set, opts ...grpc.CallOption) (*Result, error)
-	Delete(ctx context.Context, in *Set, opts ...grpc.CallOption) (*Result, error)
+	Delete(ctx context.Context, in *Name, opts ...grpc.CallOption) (*Result, error)
 	Subscribe(ctx context.Context, in *Empty, opts ...grpc.CallOption) (Api_SubscribeClient, error)
 }
 
@@ -40,7 +40,7 @@ func (c *apiClient) Add(ctx context.Context, in *Set, opts ...grpc.CallOption) (
 	return out, nil
 }
 
-func (c *apiClient) Delete(ctx context.Context, in *Set, opts ...grpc.CallOption) (*Result, error) {
+func (c *apiClient) Delete(ctx context.Context, in *Name, opts ...grpc.CallOption) (*Result, error) {
 	out := new(Result)
 	err := c.cc.Invoke(ctx, "/Api/Delete", in, out, opts...)
 	if err != nil {
@@ -86,7 +86,7 @@ func (x *apiSubscribeClient) Recv() (*Message, error) {
 // for forward compatibility
 type ApiServer interface {
 	Add(context.Context, *Set) (*Result, error)
-	Delete(context.Context, *Set) (*Result, error)
+	Delete(context.Context, *Name) (*Result, error)
 	Subscribe(*Empty, Api_SubscribeServer) error
 	mustEmbedUnimplementedApiServer()
 }
@@ -98,7 +98,7 @@ type UnimplementedApiServer struct {
 func (UnimplementedApiServer) Add(context.Context, *Set) (*Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Add not implemented")
 }
-func (UnimplementedApiServer) Delete(context.Context, *Set) (*Result, error) {
+func (UnimplementedApiServer) Delete(context.Context, *Name) (*Result, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedApiServer) Subscribe(*Empty, Api_SubscribeServer) error {
@@ -136,7 +136,7 @@ func _Api_Add_Handler(srv interface{}, ctx context.Context, dec func(interface{}
 }
 
 func _Api_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Set)
+	in := new(Name)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -148,7 +148,7 @@ func _Api_Delete_Handler(srv interface{}, ctx context.Context, dec func(interfac
 		FullMethod: "/Api/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiServer).Delete(ctx, req.(*Set))
+		return srv.(ApiServer).Delete(ctx, req.(*Name))
 	}
 	return interceptor(ctx, in, info, handler)
 }

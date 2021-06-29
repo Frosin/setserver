@@ -6,11 +6,8 @@ import (
 	"time"
 
 	"github.com/Frosin/setserver/internal/api"
-	"github.com/Frosin/setserver/internal/api/gen"
 	"github.com/Frosin/setserver/internal/notification"
 	"github.com/Frosin/setserver/internal/storage"
-
-	"google.golang.org/grpc"
 )
 
 const (
@@ -23,17 +20,19 @@ func getConfig() api.Config {
 	if err != nil {
 		timeout = int(defaultTimeout)
 	}
+	port := os.Getenv("SERVER_PORT")
+
 	return api.Config{
 		Timeout: time.Duration(timeout) * time.Second,
+		Port:    port,
 	}
 }
 
 func main() {
-	grpcServer := grpc.NewServer()
 	setServer := api.NewServer(
 		getConfig(),
 		storage.NewMapStorage(),
 		notification.NewBasicNotificator(),
 	)
-	gen.RegisterApiServer(grpcServer, &setServer)
+	setServer.RunServer()
 }
